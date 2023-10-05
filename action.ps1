@@ -2,13 +2,13 @@
 #########################################################################
 # Form mapping
 $formObject = @{
-    Identity      = $form.Name
+    GroupIdentity = $form.GroupIdentity
     UsersToRemove = $form.UsersToRemove.Name
 }
 
 [bool]$IsConnected = $false
 try {
-    Write-Information "Executing ExchangeOnline action: [DistributionGroupRevokeMembership] for: [$($formObject.Identity)]"
+    Write-Information "Executing ExchangeOnline action: [DistributionGroupRevokeMembership] for: [$($formObject.GroupIdentity)]"
 
     $null = Import-Module ExchangeOnlineManagement
 
@@ -20,7 +20,7 @@ try {
     foreach ($user in $formObject.UsersToRemove) {
         try {
             $removeDistributionGroupMember = @{
-                Identity                        = $formObject.Identity
+                Identity                        = $formObject.GroupIdentity
                 Member                          = $user
                 BypassSecurityGroupManagerCheck = $true
             }
@@ -28,26 +28,26 @@ try {
             $auditLog = @{
                 Action            = 'RevokeMembership'
                 System            = 'ExchangeOnline'
-                TargetIdentifier  = $formObject.Identity
-                TargetDisplayName = $formObject.Identity
-                Message           = "ExchangeOnline action: [DistributionGroupRevokeMembership][$($user)] from group [$($formObject.Identity)] executed successfully"
+                TargetIdentifier  = $formObject.GroupIdentity
+                TargetDisplayName = $formObject.GroupIdentity
+                Message           = "ExchangeOnline action: [DistributionGroupRevokeMembership][$($user)] from group [$($formObject.GroupIdentity)] executed successfully"
                 IsError           = $false
             }
             Write-Information -Tags 'Audit' -MessageData $auditLog
-            Write-Information "ExchangeOnline action: [DistributionGroupRevokeMembership][$($user)] from group [$($formObject.Identity)] executed successfully"
+            Write-Information "ExchangeOnline action: [DistributionGroupRevokeMembership][$($user)] from group [$($formObject.GroupIdentity)] executed successfully"
 
         } catch {
             if ($_.Exception.ErrorRecord.CategoryInfo.Reason -eq 'MemberNotFoundException') {
                 $auditLog = @{
                     Action            = 'RevokeMembership'
                     System            = 'ExchangeOnline'
-                    TargetIdentifier  = $formObject.Identity
-                    TargetDisplayName = $formObject.Identity
-                    Message           = "ExchangeOnline action: [DistributionGroupRevokeMembership][$($user)] from group [$($formObject.Identity)] Already Removed"
+                    TargetIdentifier  = $formObject.GroupIdentity
+                    TargetDisplayName = $formObject.GroupIdentity
+                    Message           = "ExchangeOnline action: [DistributionGroupRevokeMembership][$($user)] from group [$($formObject.GroupIdentity)] Already Removed"
                     IsError           = $false
                 }
                 Write-Information -Tags 'Audit' -MessageData $auditLog
-                Write-Information "ExchangeOnline action: [DistributionGroupRevokeMembership][$($user)] from group [$($formObject.Identity)] Already Removed"
+                Write-Information "ExchangeOnline action: [DistributionGroupRevokeMembership][$($user)] from group [$($formObject.GroupIdentity)] Already Removed"
                 Write-Information "Warning message: $($_.Exception.Message)"
                 continue
             }
