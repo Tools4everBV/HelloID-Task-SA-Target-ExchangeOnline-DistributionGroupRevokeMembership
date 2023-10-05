@@ -61,11 +61,11 @@ try {
         System            = 'ExchangeOnline'
         TargetIdentifier  = $formObject.Identity
         TargetDisplayName = $formObject.Identity
-        Message           = "Could not execute ExchangeOnline action: [DistributionGroupRevokeMembership] for: [$($formObject.Identity)], error: $($ex.Exception.Message)"
+        Message           = "Could not execute ExchangeOnline action: [DistributionGroupRevokeMembership] for: [$($formObject.GroupIdentity)], error: $($ex.Exception.Message)"
         IsError           = $true
     }
     Write-Information -Tags 'Audit' -MessageData $auditLog
-    Write-Error "Could not execute ExchangeOnline action: [DistributionGroupRevokeMembership] for: [$($formObject.Identity)], error: $($ex.Exception.Message)"
+    Write-Error "Could not execute ExchangeOnline action: [DistributionGroupRevokeMembership] for: [$($formObject.GroupIdentity)], error: $($ex.Exception.Message)"
 
 } finally {
     if ($IsConnected) {
